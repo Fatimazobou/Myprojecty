@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض وتشغيل أكواد C</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        select, button { margin: 10px; padding: 10px; font-size: 16px; }
+        pre { background: #f4f4f4; padding: 15px; text-align: left; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>عرض وتشغيل أكواد C</h1>
+    
+    <label for="fileSelect">اختر ملف C:</label>
+    <select id="fileSelect">
+        <option value="1.cxx">1.cxx</option>
+        <option value="2.cxx">2.cxx</option>
+        <option value="3.cxx">3.cxx</option>
+        <option value="4.cxx">4.cxx</option>
+        <option value="5.cxx">5.cxx</option>
+        <option value="6.cxx">6.cxx</option>
+        <option value="7.cxx">7.cxx</option>
+        <option value="8.cxx">8.cxx</option>
+        <option value="9.cxx">9.cxx</option>
+    </select>
+    
+    <button onclick="loadCode()">عرض الكود</button>
+    <button onclick="runCode()">تشغيل الكود</button>
+    
+    <pre id="codeDisplay">لم يتم تحميل أي كود بعد...</pre>
+
+    <script>
+        function loadCode() {
+            let fileName = document.getElementById("fileSelect").value;
+            fetch(fileName)
+                .then(response => response.text())
+                .then(data => document.getElementById("codeDisplay").textContent = data)
+                .catch(error => console.error("خطأ في تحميل الملف:", error));
+        }
+
+        function runCode() {
+            let fileName = document.getElementById("fileSelect").value;
+            let onlineCompiler = `https://www.jdoodle.com/compile-c-online/?file=${fileName}`;
+            window.open(onlineCompiler, "_blank");
+        }
+    </script>
+
+</body>
+</html>
