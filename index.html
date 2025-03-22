@@ -3,50 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عرض وتشغيل أكواد C</title>
+    <title>تشغيل أكواد C++ أونلاين</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        select, button { margin: 10px; padding: 10px; font-size: 16px; }
-        pre { background: #f4f4f4; padding: 15px; text-align: left; border-radius: 5px; }
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; }
+        h2 { color: #333; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; padding: 10px 15px; background: #007bff; color: white; border-radius: 5px; }
+        a:hover { background: #0056b3; }
     </style>
 </head>
 <body>
-
-    <h1>عرض وتشغيل أكواد C</h1>
-    
-    <label for="fileSelect">اختر ملف C:</label>
-    <select id="fileSelect">
-        <option value="1.cxx">1.cxx</option>
-        <option value="2.cxx">2.cxx</option>
-        <option value="3.cxx">3.cxx</option>
-        <option value="4.cxx">4.cxx</option>
-        <option value="5.cxx">5.cxx</option>
-        <option value="6.cxx">6.cxx</option>
-        <option value="7.cxx">7.cxx</option>
-        <option value="8.cxx">8.cxx</option>
-        <option value="9.cxx">9.cxx</option>
-    </select>
-    
-    <button onclick="loadCode()">عرض الكود</button>
-    <button onclick="runCode()">تشغيل الكود</button>
-    
-    <pre id="codeDisplay">لم يتم تحميل أي كود بعد...</pre>
-
-    <script>
-        function loadCode() {
-            let fileName = document.getElementById("fileSelect").value;
-            fetch(fileName)
-                .then(response => response.text())
-                .then(data => document.getElementById("codeDisplay").textContent = data)
-                .catch(error => console.error("خطأ في تحميل الملف:", error));
-        }
-
-        function runCode() {
-            let fileName = document.getElementById("fileSelect").value;
-            let onlineCompiler = `https://www.jdoodle.com/compile-c-online/?file=${fileName}`;
-            window.open(onlineCompiler, "_blank");
-        }
-    </script>
-
+    <h2>اختَر ملف C++ لتشغيله أونلاين:</h2>
+    <ul>
+        <li><a href="https://godbolt.org/?editor=code&source=CompilerExplorer&code=#include<iostream>%0Ausing namespace std;%0Aint main()%7Bcout%20%3C%3C%20%22Hello%20World!%22%3Breturn%200%3B%7D" target="_blank">ملف 1.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 2.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 3.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 4.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 5.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 6.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 7.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 8.cxx</a></li>
+        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 9.cxx</a></li>
+    </ul>
 </body>
 </html>
