@@ -3,28 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تشغيل أكواد C++ أونلاين</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; }
-        h2 { color: #333; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin: 10px 0; }
-        a { text-decoration: none; padding: 10px 15px; background: #007bff; color: white; border-radius: 5px; }
-        a:hover { background: #0056b3; }
-    </style>
+    <title>تشغيل أكواد C++</title>
 </head>
 <body>
-    <h2>اختَر ملف C++ لتشغيله أونلاين:</h2>
-    <ul>
-        <li><a href="https://godbolt.org/?editor=code&source=CompilerExplorer&code=#include<iostream>%0Ausing namespace std;%0Aint main()%7Bcout%20%3C%3C%20%22Hello%20World!%22%3Breturn%200%3B%7D" target="_blank">ملف 1.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 2.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 3.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 4.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 5.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 6.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 7.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 8.cxx</a></li>
-        <li><a href="https://godbolt.org/?editor=code" target="_blank">ملف 9.cxx</a></li>
-    </ul>
+    <h2>تشغيل أكواد C++ من Replit</h2>
+    <p>اختر الملف الذي تريد تشغيله:</p>
+
+    <select id="fileSelector">
+        <option value="" disabled selected>اختر ملفًا</option>
+        <option value="1.cxx">ملف 1</option>
+        <option value="2.cxx">ملف 2</option>
+        <option value="3.cxx">ملف 3</option>
+        <option value="4.cxx">ملف 4</option>
+        <option value="5.cxx">ملف 5</option>
+        <option value="6.cxx">ملف 6</option>
+        <option value="7.cxx">ملف 7</option>
+        <option value="8.cxx">ملف 8</option>
+        <option value="9.cxx">ملف 9</option>
+    </select>
+
+    <button onclick="runCode()">🔄 تشغيل الكود</button>
+
+    <!-- لعرض الكود بعد تشغيله -->
+    <iframe id="viewer" width="100%" height="500px" frameborder="0"></iframe>
+
+    <script>
+        function runCode() {
+            let file = document.getElementById("fileSelector").value;
+            if (file) {
+                let url = `https://replit.com/@bofazo911/myreplit2?embed=true&file=${file}`;
+                document.getElementById("viewer").src = url;
+            } else {
+                alert("يرجى اختيار ملف أولاً!");
+            }
+        }
+    </script>
+
 </body>
-</html>
+</html
