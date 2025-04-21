@@ -1,40 +1,141 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تشغيل أكواد C++</title>
+  <meta charset="UTF-8">
+  <title>تشفير النصوص</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin: 30px;
+    }
+    textarea {
+      width: 90%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    select, button {
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <h2>تشغيل أكواد C++ من Replit</h2>
-    <p>اختر الملف الذي تريد تشغيله:</p>
+  <h2>تشفير النصوص</h2>
+  <textarea id="inputText" placeholder="أدخل النص هنا..."></textarea><br>
+  <select id="algoSelect">
+    <option value="trith">Trithomius</option>
+    <option value="rot13">ROT13 (Albam)</option>
+    <option value="atbah">Atbah</option>
+    <option value="atbash">Atbash</option>
+    <option value="polybe">Polybe</option>
+  </select>
+  <button onclick="encrypt()">تشفير</button>
 
-    <select id="fileSelector">
-        <option value="" disabled selected>اختر ملفًا</option>
-        <option value="1.cxx">ملف 1</option>
-        <option value="2.cxx">ملف 2</option>
-        <option value="3.cxx">ملف 3</option>
-        <option value="4.cxx">ملف 4</option>
-        <option value="5.cxx">ملف 5</option>
-        <option value="6.cxx">ملف 6</option>
-        <option value="7.cxx">ملف 7</option>
-        <option value="8.cxx">ملف 8</option>
-        <option value="9.cxx">ملف 9</option>
-    </select>
+  <div id="result"></div>
 
-    <button onclick="openReplit()">🔄 تشغيل الكود</button>
+  <script>
+    function toUpperCase(text) {
+      return text.toUpperCase();
+    }
 
-    <script>
-        function openReplit() {
-            let file = document.getElementById("fileSelector").value;
-            if (file) {
-                let url = `https://replit.com/@bofazo911/myreplit2?file=${file}`;
-                window.open(url, "_blank"); // يفتح الرابط في نافذة جديدة
-            } else {
-                alert("يرجى اختيار ملف أولاً!");
-            }
+    function trithEncrypt(text) {
+      let result = '';
+      text = toUpperCase(text);
+      for (let i = 0; i < text.length; i++) {
+        let c = text[i];
+        if (c >= 'A' && c <= 'Z') {
+          result += String.fromCharCode(((c.charCodeAt(0) - 65 + i) % 26) + 65);
+        } else {
+          result += c;
         }
-    </script>
+      }
+      return result;
+    }
 
+    function rot13(text) {
+      return text.replace(/[A-Za-z]/g, function(c) {
+        return String.fromCharCode(
+          c.charCodeAt(0) + (c.toLowerCase() <= 'm' ? 13 : -13)
+        );
+      });
+    }
+
+    function atbah(text) {
+      return text.replace(/[A-Za-z]/g, function(c) {
+        const base = c === c.toUpperCase() ? 65 : 97;
+        return String.fromCharCode(base + (25 - (c.charCodeAt(0) - base)));
+      });
+    }
+
+    function atbash(text) {
+      return text.replace(/[A-Za-z]/g, function(c) {
+        const base = c === c.toUpperCase() ? 65 : 97;
+        return String.fromCharCode(base + (25 - (c.charCodeAt(0) - base)));
+      });
+    }
+
+    const square = [
+      ['A','B','C','D','E'],
+      ['F','G','H','I','K'],
+      ['L','M','N','O','P'],
+      ['Q','R','S','T','U'],
+      ['V','W','X','Y','Z']
+    ];
+
+    function findPolybe(ch) {
+      if (ch === 'J') ch = 'I';
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          if (square[i][j] === ch) return `${i+1}${j+1}`;
+        }
+      }
+      return '';
+    }
+
+    function encryptPolybe(text) {
+      let result = '';
+      text = toUpperCase(text);
+      for (let i = 0; i < text.length; i++) {
+        let ch = text[i];
+        if (ch >= 'A' && ch <= 'Z') {
+          result += findPolybe(ch) + ' ';
+        } else if (ch === ' ') {
+          result += '  ';
+        }
+      }
+      return result.trim();
+    }
+
+    function encrypt() {
+      const input = document.getElementById('inputText').value;
+      const algo = document.getElementById('algoSelect').value;
+      let output = '';
+
+      switch (algo) {
+        case 'trith':
+          output = trithEncrypt(input);
+          break;
+        case 'rot13':
+          output = rot13(input);
+          break;
+        case 'atbah':
+          output = atbah(input);
+          break;
+        case 'atbash':
+          output = atbash(input);
+          break;
+        case 'polybe':
+          output = encryptPolybe(input);
+          break;
+      }
+
+      document.getElementById('result').innerText = 'النص المشفر: ' + output;
+    }
+  </script>
 </body>
 </html>
