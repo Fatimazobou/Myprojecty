@@ -1,155 +1,551 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Encryption Tool</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-        }
-        select, input[type="text"], input[type="button"] {
-            margin: 10px;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            display: none;
-        }
-        .code-block {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f4f4f4;
-            border: 1px solid #ddd;
-            white-space: pre-wrap;
-            font-family: monospace;
-            display: none;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة تشفير النصوص</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        select, input[type="text"], input[type="button"] {
+            margin: 10px;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            display: none;
+        }
+        .code-block {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            font-family: monospace;
+            display: none;
+        }
+        .result-field {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            text-align: left;
+        }
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>أداة تشفير النصوص</h1>
-    <label for="algorithm">اختر الخوارزمية:</label>
-    <select id="algorithm">
-        <option value="Alberti">Alberti</option>
-        <option value="Trithemius">Trithemius</option>
-        <option value="Substitution">Substitution simple aléatoire</option>
-        <option value="Albam">Albam</option>
-        <option value="Atbash">Atbash</option>
-        <option value="Atbah">Atbah</option>
-        <option value="CarrePolybe">Carré de Polybe</option>
-        <option value="Vigenere">Vigenère</option>
-        <option value="Autokey">Autokey</option>
-        <option value="Porta">Porta</option>
-        <option value="Beaufort">Beaufort</option>
-        <option value="Vernam">Vernam (OTP)</option>
-    </select><br><br>
-    <label for="key">المفتاح (إذا لزم الأمر):</label>
-    <input type="text" id="key" placeholder="أدخل المفتاح"><br><br>
-    <label for="text">النص:</label>
-    <input type="text" id="text" placeholder="أدخل النص هنا"><br><br>
-    <input type="button" value="تنفيذ" onclick="processText()">
-    <div id="result">
-        <h3>النتيجة:</h3>
-        <p id="output"></p>
-    </div>
-    <div id="code-display">
-        <button onclick="showCode('Alberti10')">عرض كود Alberti</button>
-        <div id="Alberti" class="code-block"></div>
-        <button onclick="showCode('trithemius11')">عرض كود Trithemius</button>
-        <div id="Trithemius" class="code-block"></div>
-        <button onclick="showCode('sibtitution simple aleatoire 9')">عرض كود Substitution</button>
-        <div id="Substitution" class="code-block"></div>
-        <button onclick="showCode('albamRot13-2')">عرض كود Albam</button>
-        <div id="Albam" class="code-block"></div>
-        <button onclick="showCode('Atbah11')">عرض كود Atbash</button>
-        <div id="Atbash" class="code-block"></div>
-        <button onclick="showCode('atbash1')">عرض كود Atbah</button>
-        <div id="Atbah" class="code-block"></div>
-        <button onclick="showCode('Carrédepolybe3')">عرض كود Carré de Polybe</button>
-        <div id="CarrePolybe" class="code-block"></div>
-        <button onclick="showCode('vigenère4')">عرض كود Vigenère</button>
-        <div id="Vigenere" class="code-block"></div>
-        <button onclick="showCode('autokey5')">عرض كود Autokey</button>
-        <div id="Autokey" class="code-block"></div>
-        <button onclick="showCode('porta10')">عرض كود Porta</button>
-        <div id="Porta" class="code-block"></div>
-        <button onclick="showCode('Beaufort7')">عرض كود Beaufort</button>
-        <div id="Beaufort" class="code-block"></div>
-        <button onclick="showCode('vernam8')">عرض كود Vernam</button>
-        <div id="Vernam" class="code-block"></div>
-    </div>
-    <script>
-        // هذه الدالة لعرض الكود الخاص بكل خوارزمية
-        function showCode(algorithm) {
-            var codeBlock = document.getElementById(algorithm);
-            // استبدال هذا الجزء بالمسار الفعلي لملف C
-            var filePath = algorithm + '.c'; // تأكد من أن الملفات موجودة بنفس الأسماء
-            fetch(filePath)
-                .then(response => response.text())
-                .then(data => {
-                    codeBlock.textContent = data;
-                    codeBlock.style.display = 'block';
-                })
-                .catch(error => {
-                    codeBlock.textContent = 'لم يتم العثور على الكود.';
-                    codeBlock.style.display = 'block';
-                });
-        }
+    <h1>أداة تشفير النصوص</h1>
+    <label for="algorithm">اختر الخوارزمية:</label>
+    <select id="algorithm">
+        <option value="Alberti">Alberti</option>
+        <option value="Trithemius">Trithemius</option>
+        <option value="Substitution">Substitution simple aléatoire</option>
+        <option value="Albam">Albam</option>
+        <option value="Atbash">Atbash</option>
+        <option value="Atbah">Atbah</option>
+        <option value="CarrePolybe">Carré de Polybe</option>
+        <option value="Vigenere">Vigenère</option>
+        <option value="Autokey">Autokey</option>
+        <option value="Porta">Porta</option>
+        <option value="Beaufort">Beaufort</option>
+        <option value="Vernam">Vernam (OTP)</option>
+        <option value="Caesar">Caesar</option>
+    </select><br><br>
+    <label for="key">المفتاح (إذا لزم الأمر):</label>
+    <input type="text" id="key" placeholder="أدخل المفتاح"><br><br>
+    <label for="text">النص:</label>
+    <input type="text" id="text" placeholder="أدخل النص هنا"><br><br>
+    <input type="button" value="تنفيذ" onclick="processText()">
+    <div id="result" class="result-container">
+        <h3>النتائج:</h3>
+        <div class="result-field">
+            <div class="result-title">النص المشفر:</div>
+            <p id="encryptedOutput"></p>
+        </div>
+        <div class="result-field">
+            <div class="result-title">النص بعد فك التشفير:</div>
+            <p id="decryptedOutput"></p>
+        </div>
+    </div>
+    <div id="code-display">
+        <button onclick="showCode('Alberti10')">عرض كود Alberti</button>
+        <div id="Alberti10" class="code-block"></div>
+        <button onclick="showCode('trithemius11')">عرض كود Trithemius</button>
+        <div id="trithemius11" class="code-block"></div>
+        <button onclick="showCode('sibtitution simple aleatoire 9')">عرض كود Substitution</button>
+        <div id="sibtitution simple aleatoire 9" class="code-block"></div>
+        <button onclick="showCode('albamRot13-2')">عرض كود Albam</button>
+        <div id="albamRot13-2" class="code-block"></div>
+        <button onclick="showCode('Atbash11')">عرض كود Atbash</button>
+        <div id="Atbash11" class="code-block"></div>
+        <button onclick="showCode('atbash1')">عرض كود Atbah</button>
+        <div id="atbash1" class="code-block"></div>
+        <button onclick="showCode('Carrédepolybe3')">عرض كود Carré de Polybe</button>
+        <div id="Carrédepolybe3" class="code-block"></div>
+        <button onclick="showCode('vigenère4')">عرض كود Vigenère</button>
+        <div id="vigenère4" class="code-block"></div>
+        <button onclick="showCode('autokey5')">عرض كود Autokey</button>
+        <div id="autokey5" class="code-block"></div>
+        <button onclick="showCode('porta10')">عرض كود Porta</button>
+        <div id="porta10" class="code-block"></div>
+        <button onclick="showCode('Beaufort7')">عرض كود Beaufort</button>
+        <div id="Beaufort7" class="code-block"></div>
+        <button onclick="showCode('vernam8')">عرض كود Vernam</button>
+        <div id="vernam8" class="code-block"></div>
+        <button onclick="showCode('Caesar')">عرض كود Caesar</button>
+        <div id="Caesar" class="code-block"></div>
+    </div>
+    <script>
+        function hideAllCodeBlocks() {
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks.forEach(block => {
+                block.style.display = 'none';
+            });
+        }
 
-        function processText() {
-            const algorithm = document.getElementById('algorithm').value;
-            const key = document.getElementById('key').value;
-            const text = document.getElementById('text').value;
-            let encryptedText = '';
-            switch (algorithm) {
-                case 'Alberti':
-                    encryptedText = albertiEncrypt(text, parseInt(key));
-                    break;
-                case 'Trithemius':
-                    encryptedText = trithemiusEncrypt(text, parseInt(key));
-                    break;
-                case 'Substitution':
-                    encryptedText = substitutionEncrypt(text, key);
-                    break;
-                case 'Albam':
-                    encryptedText = albamEncrypt(text, parseInt(key));
-                    break;
-                case 'Atbash':
-                    encryptedText = atbashEncrypt(text);
-                    break;
-                case 'Atbah':
-                    encryptedText = atbahEncrypt(text);
-                    break;
-                case 'CarrePolybe':
-                    encryptedText = carrePolybeEncrypt(text, key);
-                    break;
-                case 'Vigenere':
-                    encryptedText = vigenereEncrypt(text, key);
-                    break;
-                case 'Autokey':
-                    encryptedText = autokeyEncrypt(text, key);
-                    break;
-                case 'Porta':
-                    encryptedText = portaEncrypt(text, key);
-                    break;
-                case 'Beaufort':
-                    encryptedText = beaufortEncrypt(text, key);
-                    break;
-                case 'Vernam':
-                    encryptedText = vernamEncrypt(text, key);
-                    break;
-                default:
-                    encryptedText = text;
-                    break;
-            }
-            document.getElementById('output').innerText = encryptedText;
-            document.getElementById('result').style.display = 'block';
-        }
-    </script>
+        function showCode(algorithm) {
+            hideAllCodeBlocks();
+            var codeBlock = document.getElementById(algorithm);
+            var filePath = algorithm + '.txt'; // نفترض أن ملفات الكود هي ملفات نصية الآن
+
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        return fetch(algorithm + '.js'); // محاولة جلب ملف JS إذا لم يتم العثور على TXT
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    codeBlock.textContent = data;
+                    codeBlock.style.display = 'block';
+                })
+                .catch(error => {
+                    codeBlock.textContent = 'لم يتم العثور على الكود.';
+                    codeBlock.style.display = 'block';
+                });
+        }
+
+        function processText() {
+            const algorithm = document.getElementById('algorithm').value;
+            const key = document.getElementById('key').value;
+            const text = document.getElementById('text').value;
+            let encryptedText = '';
+            let decryptedText = '';
+
+            switch (algorithm) {
+                case 'Alberti':
+                    encryptedText = albertiCipher(text, parseInt(key), true);
+                    decryptedText = albertiCipher(encryptedText, parseInt(key), false);
+                    break;
+                case 'Trithemius':
+                    encryptedText = trithemiusCipher(text, parseInt(key), true);
+                    decryptedText = trithemiusCipher(encryptedText, parseInt(key), false);
+                    break;
+                case 'Substitution':
+                    encryptedText = substitutionCipher(text, key, true);
+                    decryptedText = substitutionCipher(encryptedText, key, false);
+                    break;
+                case 'Albam':
+                    encryptedText = albamCipher(text);
+                    decryptedText = albamCipher(encryptedText);
+                    break;
+                case 'Atbash':
+                    encryptedText = atbashCipher(text);
+                    decryptedText = atbashCipher(encryptedText);
+                    break;
+                case 'Atbah':
+                    encryptedText = atbahCipher(text);
+                    decryptedText = atbahCipher(encryptedText);
+                    break;
+                case 'CarrePolybe':
+                    encryptedText = carrePolybeCipher(text, key, true);
+                    decryptedText = carrePolybeCipher(encryptedText, key, false);
+                    break;
+                case 'Vigenere':
+                    encryptedText = vigenereCipher(text, key, true);
+                    decryptedText = vigenereCipher(encryptedText, key, false);
+                    break;
+                case 'Autokey':
+                    encryptedText = autokeyCipher(text, key, true);
+                    decryptedText = autokeyCipher(encryptedText, key, false);
+                    break;
+                case 'Porta':
+                    encryptedText = portaCipher(text, key, true);
+                    decryptedText = portaCipher(encryptedText, key, false);
+                    break;
+                case 'Beaufort':
+                    encryptedText = beaufortCipher(text, key, true);
+                    decryptedText = beaufortCipher(encryptedText, key, false);
+                    break;
+                case 'Vernam':
+                    encryptedText = vernamCipher(text, key);
+                    decryptedText = vernamCipher(encryptedText, key);
+                    break;
+                case 'Caesar':
+                    encryptedText = caesarCipher(text, parseInt(key), true);
+                    decryptedText = caesarCipher(encryptedText, parseInt(key), false);
+                    break;
+                default:
+                    encryptedText = text;
+                    decryptedText = text;
+                    break;
+            }
+            document.getElementById('encryptedOutput').innerText = encryptedText;
+            document.getElementById('decryptedOutput').innerText = decryptedText;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        // --- دوال التشفير وفك التشفير ---
+
+        // Caesar Cipher
+        function caesarCipherChar(char, key, encrypt) {
+            if (/[a-zA-Z]/.test(char)) {
+                const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                const shift = encrypt ? key : 26 - (key % 26);
+                return String.fromCharCode(((char.charCodeAt(0) - base + shift) % 26) + base);
+            } else {
+                return char;
+            }
+        }
+
+        function caesarCipher(text, key, encrypt) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                result += caesarCipherChar(text[i], key, encrypt);
+            }
+            return result;
+        }
+
+        // Alberti Cipher (Autokey-like)
+        function albertiCipher(text, initialKey, encrypt) {
+            let result = '';
+            let key = initialKey % 26;
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    const charCode = char.charCodeAt(0) - base;
+                    let shiftedCharCode;
+                    if (encrypt) {
+                        shiftedCharCode = (charCode + key) % 26;
+                        key = shiftedCharCode; // Autokey mechanism
+                    } else {
+                        shiftedCharCode = (charCode - key + 26) % 26;
+                        key = charCode; // Autokey mechanism for decrypt
+                    }
+                    result += String.fromCharCode(shiftedCharCode + base);
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // Trithemius Cipher
+        function trithemiusCipherChar(char, pos, encrypt) {
+            if (/[a-zA-Z]/.test(char)) {
+                const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                const shift = encrypt ? pos : -pos;
+                return String.fromCharCode(((char.charCodeAt(0) - base + shift + 26) % 26) + base);
+            } else {
+                return char;
+            }
+        }
+
+        function trithemiusCipher(text, initialKey, encrypt) {
+            let result = '';
+            const keyOffset = initialKey % 26;
+            for (let i = 0; i < text.length; i++) {
+                result += trithemiusCipherChar(text[i], i + keyOffset, encrypt);
+            }
+            return result;
+        }
+
+        // Substitution Cipher
+        function substitutionCipher(text, key, encrypt) {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            let result = '';
+            text = text.toLowerCase();
+            if (encrypt) {
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const index = alphabet.indexOf(char);
+                    if (index !== -1 && key.length === 26) {
+                        result += key[index];
+                    } else {
+                        result += char;
+                    }
+                }
+            } else {
+                let decryptKeyMap = {};
+                if (key.length === 26) {
+                    for (let i = 0; i < 26; i++) {
+                        decryptKeyMap[key[i]] = alphabet[i];
+                    }
+                    for (let i = 0; i < text.length; i++) {
+                        const char = text[i];
+                        result += decryptKeyMap[char] || char;
+                    }
+                } else {
+                    return "مفتاح فك التشفير غير صالح";
+                }
+            }
+            return result;
+        }
+
+        // Albam Cipher (ROT13)
+        function albamCipher(text) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    result += String.fromCharCode(((char.charCodeAt(0) - base + 13) % 26) + base);
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // Atbash Cipher
+        function atbashCipher(text) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    result += String.fromCharCode(base + 25 - (char.charCodeAt(0) - base));
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // Atbah Cipher (Assuming it's the reverse of the Arabic alphabet)
+        function atbahCipher(text) {
+            const arabicAlphabet = 'أبجدهوزحطيكلمنسعفصقرشتثخذضظغ';
+            const reversedAlphabet = 'غظضذتشقرصعسنملكيطحزوهدجبا';
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const index = arabicAlphabet.indexOf(char);
+                result += index !== -1 ? reversedAlphabet[index] : char;
+            }
+            return result;
+        }
+
+        // Carre de Polybe (Polybius Square)
+        function carrePolybeCipher(text, key, encrypt) {
+            const square = [
+                ['A', 'B', 'C', 'D', 'E'],
+                ['F', 'G', 'H', 'I', 'K'], // I/J combined
+                ['L', 'M', 'N', 'O', 'P'],
+                ['Q', 'R', 'S', 'T', 'U'],
+                ['V', 'W', 'X', 'Y', 'Z']
+            ];
+            const charToCoords = (char) => {
+                char = char.toUpperCase();
+                if (char === 'J') char = 'I';
+                for (let i = 0; i < 5; i++) {
+                    for (let j = 0; j < 5; j++) {
+                        if (square[i][j] === char) {
+                            return [i + 1, j + 1];
+                        }
+                    }
+                }
+                return null;
+            };
+            const coordsToChar = (row, col) => square[row - 1][col - 1];
+            let result = '';
+            text = text.toUpperCase();
+            if (encrypt) {
+                for (let i = 0; i < text.length; i++) {
+                    const coords = charToCoords(text[i]);
+                    if (coords) {
+                        result += coords[0].toString() + coords[1].toString();
+                    } else if (text[i] === ' ') {
+                        result += ' ';
+                    }
+                }
+            } else {
+                for (let i = 0; i < text.length; i += 2) {
+                    if (i + 1 < text.length) {
+                        const row = parseInt(text[i]);
+                        const col = parseInt(text[i + 1]);
+                        if (!isNaN(row) && !isNaN(col) && row >= 1 && row <= 5 && col >= 1 && col <= 5) {
+                            result += coordsToChar(row, col);
+                        } else if (text[i] === ' ') {
+                            result += ' ';
+                            i--; // Don't skip space
+                        }
+                    } else if (text[i] !== ' ') {
+                        // Handle odd number of digits if needed
+                    }
+                }
+            }
+            return result;
+        }
+
+        // Vigenere Cipher
+        function vigenereCipher(text, key, encrypt) {
+            let result = '';
+            key = key.toUpperCase();
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    const shift = key.charCodeAt(keyIndex % key.length) - 'A'.charCodeAt(0);
+                    let shiftedCharCode;
+                    if (encrypt) {
+                        shiftedCharCode = (char.charCodeAt(0) - base + shift) % 26;
+                    } else {
+                        shiftedCharCode = (char.charCodeAt(0) - base - shift + 26) % 26;
+                    }
+                    result += String.fromCharCode(shiftedCharCode + base);
+                    keyIndex++;
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // Autokey Cipher
+        function autokeyCipher(text, key, encrypt) {
+            let result = '';
+            key = key.toUpperCase();
+            let currentKey = key;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    const shift = currentKey.charCodeAt(i % currentKey.length) - 'A'.charCodeAt(0);
+                    let shiftedCharCode;
+                    if (encrypt) {
+                        shiftedCharCode = (char.charCodeAt(0) - base + shift) % 26;
+                        if (text[i].toUpperCase() >= 'A' && text[i].toUpperCase() <= 'Z') {
+                            currentKey += String.fromCharCode(shiftedCharCode + base);
+                        }
+                    } else {
+                        shiftedCharCode = (char.charCodeAt(0) - base - shift + 26) % 26;
+                        if (text[i].toUpperCase() >= 'A' && text[i].toUpperCase() <= 'Z') {
+                            currentKey += text[i].toUpperCase();
+                        }
+                    }
+                    result += String.fromCharCode(shiftedCharCode + base);
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // Porta Cipher
+        function portaCipher(text, key, encrypt) {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const keySquare = [
+                "LMNOPQRSTUVWXYZABCDEFGHIJK",
+                "NOPQRSTUVWXYZABCDEFGHIJKLM",
+                "PQRSTUVWXYZABCDEFGHIJKLMN",
+                "QRSTUVWXYZABCDEFGHIJKLMNOP",
+                "RSTUVWXYZABCDEFGHIJKLMNOPQ",
+                "TUVWXYZABCDEFGHIJKLMNOPQR",
+                "UVWXYZABCDEFGHIJKLMNOPQRS",
+                "VWXYZABCDEFGHIJKLMNOPQRST",
+                "WXYZABCDEFGHIJKLMNOPQRSTU",
+                "XYZABCDEFGHIJKLMNOPQRSTUV",
+                "YZABCDEFGHIJKLMNOPQRSTUVW",
+                "ZABCDEFGHIJKLMNOPQRSTUVWX",
+                "ABCDEFGHIJKLMNOPQRSTUVWXY"
+            ];
+            let result = '';
+            key = key.toUpperCase();
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i].toUpperCase();
+                if (alphabet.includes(char)) {
+                    const keyChar = key[keyIndex % key.length];
+                    const keyRow = alphabet.indexOf(keyChar);
+                    const textCol = alphabet.indexOf(char);
+                    if (encrypt) {
+                        result += keySquare[keyRow][textCol];
+                    } else {
+                        let decryptedChar = '';
+                        for (let j = 0; j < 26; j++) {
+                            if (keySquare[keyRow][j] === char) {
+                                decryptedChar = alphabet[j];
+                                break;
+                            }
+                        }
+                        result += decryptedChar;
+                    }
+                    keyIndex++;
+                    if (text[i] === text[i].toLowerCase()) {
+                        result = result.slice(0, -1) + result.slice(-1).toLowerCase();
+                    }
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
+
+        // Beaufort Cipher
+        function beaufortCipher(text, key, encrypt) {
+            let result = '';
+            key = key.toUpperCase();
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    const shift = key.charCodeAt(keyIndex % key.length) - 'A'.charCodeAt(0);
+                    let shiftedCharCode;
+                    if (encrypt) {
+                        shiftedCharCode = (shift - (char.charCodeAt(0) - base) + 26) % 26;
+                    } else {
+                        shiftedCharCode = (shift - (char.charCodeAt(0) - base) + 26) % 26; // Beaufort is its own inverse
+                    }
+                    result += String.fromCharCode(shiftedCharCode + base);
+                    keyIndex++;
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // Vernam Cipher (One-Time Pad) - Requires a key of the same length as the text
+        function vernamCipher(text, key) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const keyChar = key[i % key.length];
+                if (/[a-zA-Z]/.test(char) && /[a-zA-Z]/.test(keyChar)) {
+                    const base = char === char.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    const keyBase = keyChar === keyChar.toUpperCase() ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                    const charCode = char.charCodeAt(0) - base;
+                    const keyCode = keyChar.charCodeAt(0) - keyBase;
+                    const encryptedCharCode = (charCode ^ keyCode);
+                    result += String.fromCharCode(encryptedCharCode + base);
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+    </script>
 </body>
 </html>
