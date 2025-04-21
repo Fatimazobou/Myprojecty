@@ -1,141 +1,230 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>تشفير النصوص</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Encryption</title>
   <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin: 30px;
-    }
-    textarea {
-      width: 90%;
-      height: 100px;
-      margin-bottom: 10px;
-    }
-    select, button {
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    select, textarea, input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
       font-size: 16px;
-      padding: 5px 10px;
     }
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-    }
+    #output { background: #eee; padding: 10px; min-height: 50px; }
   </style>
 </head>
 <body>
-  <h2>تشفير النصوص</h2>
-  <textarea id="inputText" placeholder="أدخل النص هنا..."></textarea><br>
-  <select id="algoSelect">
-    <option value="trith">Trithomius</option>
-    <option value="rot13">ROT13 (Albam)</option>
-    <option value="atbah">Atbah</option>
+  <h1>Text Encryption Tool</h1>
+  <label for="algorithm">Choose Algorithm:</label>
+  <select id="algorithm">
+    <option value="caesar">Caesar</option>
+    <option value="alberti">Alberti</option>
+    <option value="trithemius">Trithemius</option>
+    <option value="substitution">Substitution simple aléatoire</option>
+    <option value="albam">Albam</option>
     <option value="atbash">Atbash</option>
-    <option value="polybe">Polybe</option>
-  </select>
-  <button onclick="encrypt()">تشفير</button>
+    <option value="atbah">Atbah</option>
+    <option value="polybe">Carré de Polybe</option>
+    <option value="vigenere">Vigenère</option>
+    <option value="autokey">Autokey</option>
+    <option value="porta">Porta</option>
+    <option value="beaufort">Beaufort</option>
+    <option value="vernam">Vernam (OTP)</option>
+  </select><label for="key">Key:</label> <input type="text" id="key" placeholder="Enter key if required" />
 
-  <div id="result"></div>
+<label for="text">Text:</label>
 
-  <script>
-    function toUpperCase(text) {
-      return text.toUpperCase();
-    }
+  <textarea id="text" rows="5" placeholder="Enter your message here..."></textarea><button onclick="process('encrypt')">Encrypt</button> <button onclick="process('decrypt')">Decrypt</button>
 
-    function trithEncrypt(text) {
+  <h2>Result:</h2>
+  <div id="output"></div>  <script>
+    function process(mode) {
+      const algo = document.getElementById('algorithm').value;
+      const text = document.getElementById('text').value;
+      const key = document.getElementById('key').value;
       let result = '';
-      text = toUpperCase(text);
-      for (let i = 0; i < text.length; i++) {
-        let c = text[i];
-        if (c >= 'A' && c <= 'Z') {
-          result += String.fromCharCode(((c.charCodeAt(0) - 65 + i) % 26) + 65);
-        } else {
-          result += c;
-        }
-      }
-      return result;
-    }
-
-    function rot13(text) {
-      return text.replace(/[A-Za-z]/g, function(c) {
-        return String.fromCharCode(
-          c.charCodeAt(0) + (c.toLowerCase() <= 'm' ? 13 : -13)
-        );
-      });
-    }
-
-    function atbah(text) {
-      return text.replace(/[A-Za-z]/g, function(c) {
-        const base = c === c.toUpperCase() ? 65 : 97;
-        return String.fromCharCode(base + (25 - (c.charCodeAt(0) - base)));
-      });
-    }
-
-    function atbash(text) {
-      return text.replace(/[A-Za-z]/g, function(c) {
-        const base = c === c.toUpperCase() ? 65 : 97;
-        return String.fromCharCode(base + (25 - (c.charCodeAt(0) - base)));
-      });
-    }
-
-    const square = [
-      ['A','B','C','D','E'],
-      ['F','G','H','I','K'],
-      ['L','M','N','O','P'],
-      ['Q','R','S','T','U'],
-      ['V','W','X','Y','Z']
-    ];
-
-    function findPolybe(ch) {
-      if (ch === 'J') ch = 'I';
-      for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < 5; j++) {
-          if (square[i][j] === ch) return `${i+1}${j+1}`;
-        }
-      }
-      return '';
-    }
-
-    function encryptPolybe(text) {
-      let result = '';
-      text = toUpperCase(text);
-      for (let i = 0; i < text.length; i++) {
-        let ch = text[i];
-        if (ch >= 'A' && ch <= 'Z') {
-          result += findPolybe(ch) + ' ';
-        } else if (ch === ' ') {
-          result += '  ';
-        }
-      }
-      return result.trim();
-    }
-
-    function encrypt() {
-      const input = document.getElementById('inputText').value;
-      const algo = document.getElementById('algoSelect').value;
-      let output = '';
 
       switch (algo) {
-        case 'trith':
-          output = trithEncrypt(input);
+        case 'caesar':
+          result = caesar(text, key || 3, mode);
           break;
-        case 'rot13':
-          output = rot13(input);
+        case 'alberti':
+          result = alberti(text, key, mode);
           break;
-        case 'atbah':
-          output = atbah(input);
+        case 'trithemius':
+          result = trithemius(text, mode);
+          break;
+        case 'substitution':
+          result = substitution(text, key, mode);
+          break;
+        case 'albam':
+          result = albam(text);
           break;
         case 'atbash':
-          output = atbash(input);
+          result = atbash(text);
+          break;
+        case 'atbah':
+          result = atbah(text);
           break;
         case 'polybe':
-          output = encryptPolybe(input);
+          result = polybe(text, mode);
           break;
+        case 'vigenere':
+          result = vigenere(text, key, mode);
+          break;
+        case 'autokey':
+          result = autokey(text, key, mode);
+          break;
+        case 'porta':
+          result = porta(text, key, mode);
+          break;
+        case 'beaufort':
+          result = beaufort(text, key, mode);
+          break;
+        case 'vernam':
+          result = vernam(text, key);
+          break;
+        default:
+          result = 'Unsupported algorithm';
       }
 
-      document.getElementById('result').innerText = 'النص المشفر: ' + output;
+      document.getElementById('output').innerText = result;
     }
-  </script>
-</body>
+
+    function caesar(text, shift, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      shift = parseInt(shift);
+      if (mode === 'decrypt') shift = 26 - shift;
+      return text.toUpperCase().split('').map(c => {
+        const i = a.indexOf(c);
+        return i === -1 ? c : a[(i + shift) % 26];
+      }).join('');
+    }
+
+    function trithemius(text, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      return text.toUpperCase().split('').map((c, i) => {
+        const idx = a.indexOf(c);
+        if (idx === -1) return c;
+        let shift = i % 26;
+        if (mode === 'decrypt') shift = 26 - shift;
+        return a[(idx + shift) % 26];
+      }).join('');
+    }
+
+    function substitution(text, key, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (!key || key.length !== 26) return 'Key must be 26 letters.';
+      key = key.toUpperCase();
+      return text.toUpperCase().split('').map(c => {
+        const idx = mode === 'encrypt' ? a.indexOf(c) : key.indexOf(c);
+        return idx === -1 ? c : (mode === 'encrypt' ? key[idx] : a[idx]);
+      }).join('');
+    }
+
+    function albam(text) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      return text.toUpperCase().split('').map(c => {
+        const idx = a.indexOf(c);
+        return idx === -1 ? c : a[25 - idx];
+      }).join('');
+    }
+
+    function atbash(text) { return albam(text); }
+
+    function atbah(text) {
+      return text.toUpperCase().split('').map(c => {
+        if (c >= 'A' && c <= 'M') return String.fromCharCode(c.charCodeAt(0) + 13);
+        if (c >= 'N' && c <= 'Z') return String.fromCharCode(c.charCodeAt(0) - 13);
+        return c;
+      }).join('');
+    }
+
+    function polybe(text, mode) {
+      const square = 'ABCDEFGHIKLMNOPQRSTUVWXYZ';
+      const coords = {};
+      for (let i = 0; i < square.length; i++) {
+        const row = Math.floor(i / 5) + 1;
+        const col = (i % 5) + 1;
+        coords[square[i]] = `${row}${col}`;
+      }
+      if (mode === 'encrypt') {
+        return text.toUpperCase().replace('J', 'I').split('').map(c => coords[c] || c).join(' ');
+      } else {
+        return text.match(/\d\d/g)?.map(pair => {
+          const idx = (parseInt(pair[0]) - 1) * 5 + parseInt(pair[1]) - 1;
+          return square[idx];
+        }).join('') || 'Invalid';
+      }
+    }
+
+    function vigenere(text, key, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      key = key.toUpperCase();
+      let j = 0;
+      return text.toUpperCase().split('').map(c => {
+        const idx = a.indexOf(c);
+        if (idx === -1) return c;
+        const k = a.indexOf(key[j++ % key.length]);
+        return a[(idx + (mode === 'encrypt' ? k : 26 - k)) % 26];
+      }).join('');
+    }
+
+    function autokey(text, key, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      key = key.toUpperCase();
+      let fullKey = key;
+      if (mode === 'encrypt') {
+        fullKey += text.toUpperCase().replace(/[^A-Z]/g, '');
+      }
+      let j = 0;
+      return text.toUpperCase().split('').map((c, i) => {
+        const idx = a.indexOf(c);
+        if (idx === -1) return c;
+        const k = a.indexOf(fullKey[j++]);
+        return a[(idx + (mode === 'encrypt' ? k : 26 - k)) % 26];
+      }).join('');
+    }
+
+    function porta(text, key, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const keys = 'NOPQRSTUVWXYZABCDEFGHIJKLM'.match(/.{2}/g);
+      key = key.toUpperCase();
+      let j = 0;
+      return text.toUpperCase().split('').map(c => {
+        const idx = a.indexOf(c);
+        if (idx === -1) return c;
+        const k = key[j++ % key.length];
+        const i = Math.floor((a.indexOf(k) % 26) / 2);
+        const pair = keys[i];
+        return a.includes(c) ? (a.indexOf(pair[0]) === idx ? pair[1] : pair[0]) : c;
+      }).join('');
+    }
+
+    function beaufort(text, key, mode) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      key = key.toUpperCase();
+      let j = 0;
+      return text.toUpperCase().split('').map(c => {
+        const i = a.indexOf(c);
+        const k = a.indexOf(key[j++ % key.length]);
+        return i === -1 ? c : a[(26 + k - i) % 26];
+      }).join('');
+    }
+
+    function vernam(text, key) {
+      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      text = text.toUpperCase();
+      key = key.toUpperCase();
+      if (key.length !== text.length) return 'Key must be same length as text';
+      return text.split('').map((c, i) => {
+        const t = a.indexOf(c);
+        const k = a.indexOf(key[i]);
+        return t === -1 ? c : a[(t ^ k) % 26];
+      }).join('');
+    }
+  </script></body>
 </html>
