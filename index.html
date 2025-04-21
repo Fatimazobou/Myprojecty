@@ -1,230 +1,272 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Text Encryption</title>
-  <style>
-    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
-    h1 { text-align: center; }
-    select, textarea, input, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-    }
-    #output { background: #eee; padding: 10px; min-height: 50px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encryption Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        select, input[type="text"], input[type="button"] {
+            margin: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>Text Encryption Tool</h1>
-  <label for="algorithm">Choose Algorithm:</label>
-  <select id="algorithm">
-    <option value="caesar">Caesar</option>
-    <option value="alberti">Alberti</option>
-    <option value="trithemius">Trithemius</option>
-    <option value="substitution">Substitution simple aléatoire</option>
-    <option value="albam">Albam</option>
-    <option value="atbash">Atbash</option>
-    <option value="atbah">Atbah</option>
-    <option value="polybe">Carré de Polybe</option>
-    <option value="vigenere">Vigenère</option>
-    <option value="autokey">Autokey</option>
-    <option value="porta">Porta</option>
-    <option value="beaufort">Beaufort</option>
-    <option value="vernam">Vernam (OTP)</option>
-  </select><label for="key">Key:</label> <input type="text" id="key" placeholder="Enter key if required" />
+    <h1>أداة تشفير النصوص</h1>
+    <label for="algorithm">اختر الخوارزمية:</label>
+    <select id="algorithm">
+        <option value="Caesar">Caesar</option>
+        <option value="Alberti">Alberti</option>
+        <option value="Trithemius">Trithemius</option>
+        <option value="Substitution">Substitution simple aléatoire</option>
+        <option value="Albam">Albam</option>
+        <option value="Atbash">Atbash</option>
+        <option value="Atbah">Atbah</option>
+        <option value="CarrePolybe">Carré de Polybe</option>
+        <option value="Vigenere">Vigenère</option>
+        <option value="Autokey">Autokey</option>
+        <option value="Porta">Porta</option>
+        <option value="Beaufort">Beaufort</option>
+        <option value="Vernam">Vernam (OTP)</option>
+    </select><br><br>
 
-<label for="text">Text:</label>
+    <label for="key">المفتاح (إذا لزم الأمر):</label>
+    <input type="text" id="key" placeholder="أدخل المفتاح"><br><br>
 
-  <textarea id="text" rows="5" placeholder="Enter your message here..."></textarea><button onclick="process('encrypt')">Encrypt</button> <button onclick="process('decrypt')">Decrypt</button>
+    <label for="text">النص:</label>
+    <input type="text" id="text" placeholder="أدخل النص هنا"><br><br>
 
-  <h2>Result:</h2>
-  <div id="output"></div>  <script>
-    function process(mode) {
-      const algo = document.getElementById('algorithm').value;
-      const text = document.getElementById('text').value;
-      const key = document.getElementById('key').value;
-      let result = '';
+    <input type="button" value="تنفيذ" onclick="processText()">
 
-      switch (algo) {
-        case 'caesar':
-          result = caesar(text, key || 3, mode);
-          break;
-        case 'alberti':
-          result = alberti(text, key, mode);
-          break;
-        case 'trithemius':
-          result = trithemius(text, mode);
-          break;
-        case 'substitution':
-          result = substitution(text, key, mode);
-          break;
-        case 'albam':
-          result = albam(text);
-          break;
-        case 'atbash':
-          result = atbash(text);
-          break;
-        case 'atbah':
-          result = atbah(text);
-          break;
-        case 'polybe':
-          result = polybe(text, mode);
-          break;
-        case 'vigenere':
-          result = vigenere(text, key, mode);
-          break;
-        case 'autokey':
-          result = autokey(text, key, mode);
-          break;
-        case 'porta':
-          result = porta(text, key, mode);
-          break;
-        case 'beaufort':
-          result = beaufort(text, key, mode);
-          break;
-        case 'vernam':
-          result = vernam(text, key);
-          break;
-        default:
-          result = 'Unsupported algorithm';
-      }
+    <div id="result">
+        <h3>النتيجة:</h3>
+        <p id="output"></p>
+    </div>
 
-      document.getElementById('output').innerText = result;
-    }
+    <script>
+        function caesarEncrypt(text, key) {
+            let result = '';
+            key = key % 26; // To handle keys larger than 26
+            for (let i = 0; i < text.length; i++) {
+                let char = text.charCodeAt(i);
+                if (char >= 65 && char <= 90) {
+                    result += String.fromCharCode((char - 65 + key) % 26 + 65);
+                } else if (char >= 97 && char <= 122) {
+                    result += String.fromCharCode((char - 97 + key) % 26 + 97);
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function caesar(text, shift, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      shift = parseInt(shift);
-      if (mode === 'decrypt') shift = 26 - shift;
-      return text.toUpperCase().split('').map(c => {
-        const i = a.indexOf(c);
-        return i === -1 ? c : a[(i + shift) % 26];
-      }).join('');
-    }
+        function albertiEncrypt(text, key) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                if (alphabet.indexOf(text[i].toUpperCase()) !== -1) {
+                    let pos = (alphabet.indexOf(text[i].toUpperCase()) + key) % 26;
+                    result += alphabet[pos];
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function trithemius(text, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      return text.toUpperCase().split('').map((c, i) => {
-        const idx = a.indexOf(c);
-        if (idx === -1) return c;
-        let shift = i % 26;
-        if (mode === 'decrypt') shift = 26 - shift;
-        return a[(idx + shift) % 26];
-      }).join('');
-    }
+        function trithemiusEncrypt(text, key) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                if (alphabet.indexOf(text[i].toUpperCase()) !== -1) {
+                    let pos = (alphabet.indexOf(text[i].toUpperCase()) + key + i) % 26;
+                    result += alphabet[pos];
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function substitution(text, key, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      if (!key || key.length !== 26) return 'Key must be 26 letters.';
-      key = key.toUpperCase();
-      return text.toUpperCase().split('').map(c => {
-        const idx = mode === 'encrypt' ? a.indexOf(c) : key.indexOf(c);
-        return idx === -1 ? c : (mode === 'encrypt' ? key[idx] : a[idx]);
-      }).join('');
-    }
+        function substitutionEncrypt(text, key) {
+            let result = '';
+            const shuffled = key.split('').sort(() => Math.random() - 0.5).join('');
+            for (let i = 0; i < text.length; i++) {
+                result += shuffled.charAt(text.charCodeAt(i) % shuffled.length);
+            }
+            return result;
+        }
 
-    function albam(text) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      return text.toUpperCase().split('').map(c => {
-        const idx = a.indexOf(c);
-        return idx === -1 ? c : a[25 - idx];
-      }).join('');
-    }
+        function albamEncrypt(text, key) {
+            // This will implement Albam cipher
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                if (alphabet.indexOf(text[i].toUpperCase()) !== -1) {
+                    let pos = (alphabet.indexOf(text[i].toUpperCase()) + key) % 26;
+                    result += alphabet[pos];
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function atbash(text) { return albam(text); }
+        function atbashEncrypt(text) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                if (alphabet.indexOf(text[i].toUpperCase()) !== -1) {
+                    let pos = alphabet.length - alphabet.indexOf(text[i].toUpperCase()) - 1;
+                    result += alphabet[pos];
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function atbah(text) {
-      return text.toUpperCase().split('').map(c => {
-        if (c >= 'A' && c <= 'M') return String.fromCharCode(c.charCodeAt(0) + 13);
-        if (c >= 'N' && c <= 'Z') return String.fromCharCode(c.charCodeAt(0) - 13);
-        return c;
-      }).join('');
-    }
+        function atbahEncrypt(text) {
+            return text.split('').reverse().join('');
+        }
 
-    function polybe(text, mode) {
-      const square = 'ABCDEFGHIKLMNOPQRSTUVWXYZ';
-      const coords = {};
-      for (let i = 0; i < square.length; i++) {
-        const row = Math.floor(i / 5) + 1;
-        const col = (i % 5) + 1;
-        coords[square[i]] = `${row}${col}`;
-      }
-      if (mode === 'encrypt') {
-        return text.toUpperCase().replace('J', 'I').split('').map(c => coords[c] || c).join(' ');
-      } else {
-        return text.match(/\d\d/g)?.map(pair => {
-          const idx = (parseInt(pair[0]) - 1) * 5 + parseInt(pair[1]) - 1;
-          return square[idx];
-        }).join('') || 'Invalid';
-      }
-    }
+        function carrePolybeEncrypt(text, key) {
+            // A simple implementation of Polybius Square Cipher
+            const square = [
+                ['A', 'B', 'C', 'D', 'E'],
+                ['F', 'G', 'H', 'I', 'J'],
+                ['K', 'L', 'M', 'N', 'O'],
+                ['P', 'Q', 'R', 'S', 'T'],
+                ['U', 'V', 'W', 'X', 'Y']
+            ];
+            let result = '';
+            text = text.toUpperCase();
+            for (let i = 0; i < text.length; i++) {
+                for (let row = 0; row < 5; row++) {
+                    for (let col = 0; col < 5; col++) {
+                        if (square[row][col] === text[i]) {
+                            result += row + 1 + '' + (col + 1);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
 
-    function vigenere(text, key, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      key = key.toUpperCase();
-      let j = 0;
-      return text.toUpperCase().split('').map(c => {
-        const idx = a.indexOf(c);
-        if (idx === -1) return c;
-        const k = a.indexOf(key[j++ % key.length]);
-        return a[(idx + (mode === 'encrypt' ? k : 26 - k)) % 26];
-      }).join('');
-    }
+        function vigenereEncrypt(text, key) {
+            let result = '';
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                let char = text.charCodeAt(i);
+                if (char >= 65 && char <= 90) {
+                    result += String.fromCharCode((char - 65 + key[keyIndex % key.length].toUpperCase().charCodeAt(0) - 65) % 26 + 65);
+                    keyIndex++;
+                } else if (char >= 97 && char <= 122) {
+                    result += String.fromCharCode((char - 97 + key[keyIndex % key.length].toLowerCase().charCodeAt(0) - 97) % 26 + 97);
+                    keyIndex++;
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function autokey(text, key, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      key = key.toUpperCase();
-      let fullKey = key;
-      if (mode === 'encrypt') {
-        fullKey += text.toUpperCase().replace(/[^A-Z]/g, '');
-      }
-      let j = 0;
-      return text.toUpperCase().split('').map((c, i) => {
-        const idx = a.indexOf(c);
-        if (idx === -1) return c;
-        const k = a.indexOf(fullKey[j++]);
-        return a[(idx + (mode === 'encrypt' ? k : 26 - k)) % 26];
-      }).join('');
-    }
+        function autokeyEncrypt(text, key) {
+            let result = '';
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                let char = text.charCodeAt(i);
+                if (char >= 65 && char <= 90) {
+                    result += String.fromCharCode((char - 65 + key[keyIndex % key.length].toUpperCase().charCodeAt(0) - 65) % 26 + 65);
+                    key += text[i];
+                } else if (char >= 97 && char <= 122) {
+                    result += String.fromCharCode((char - 97 + key[keyIndex % key.length].toLowerCase().charCodeAt(0) - 97) % 26 + 97);
+                    key += text[i];
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
 
-    function porta(text, key, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      const keys = 'NOPQRSTUVWXYZABCDEFGHIJKLM'.match(/.{2}/g);
-      key = key.toUpperCase();
-      let j = 0;
-      return text.toUpperCase().split('').map(c => {
-        const idx = a.indexOf(c);
-        if (idx === -1) return c;
-        const k = key[j++ % key.length];
-        const i = Math.floor((a.indexOf(k) % 26) / 2);
-        const pair = keys[i];
-        return a.includes(c) ? (a.indexOf(pair[0]) === idx ? pair[1] : pair[0]) : c;
-      }).join('');
-    }
+        function portaEncrypt(text, key) {
+            // Implement Porta Cipher
+            return text; // Placeholder for implementation
+        }
 
-    function beaufort(text, key, mode) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      key = key.toUpperCase();
-      let j = 0;
-      return text.toUpperCase().split('').map(c => {
-        const i = a.indexOf(c);
-        const k = a.indexOf(key[j++ % key.length]);
-        return i === -1 ? c : a[(26 + k - i) % 26];
-      }).join('');
-    }
+        function beaufortEncrypt(text, key) {
+            return text; // Placeholder for implementation
+        }
 
-    function vernam(text, key) {
-      const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      text = text.toUpperCase();
-      key = key.toUpperCase();
-      if (key.length !== text.length) return 'Key must be same length as text';
-      return text.split('').map((c, i) => {
-        const t = a.indexOf(c);
-        const k = a.indexOf(key[i]);
-        return t === -1 ? c : a[(t ^ k) % 26];
-      }).join('');
-    }
-  </script></body>
-</html>
+        function vernamEncrypt(text, key) {
+            return text; // Placeholder for implementation
+        }
+
+        function processText() {
+            const algorithm = document.getElementById('algorithm').value;
+            const key = document.getElementById('key').value;
+            const text = document.getElementById('text').value;
+
+            let encryptedText = '';
+            switch (algorithm) {
+                case 'Caesar':
+                    encryptedText = caesarEncrypt(text, parseInt(key));
+                    break;
+                case 'Alberti':
+                    encryptedText = albertiEncrypt(text, parseInt(key));
+                    break;
+                case 'Trithemius':
+                    encryptedText = trithemiusEncrypt(text, parseInt(key));
+                    break;
+                case 'Substitution':
+                    encryptedText = substitutionEncrypt(text, key);
+                    break;
+                case 'Albam':
+                    encryptedText = albamEncrypt(text, parseInt(key));
+                    break;
+                case 'Atbash':
+                    encryptedText = atbashEncrypt(text);
+                    break;
+                case 'Atbah':
+                    encryptedText = atbahEncrypt(text);
+                    break;
+                case 'CarrePolybe':
+                    encryptedText = carrePolybeEncrypt(text, key);
+                    break;
+                case 'Vigenere':
+                    encryptedText = vigenereEncrypt(text, key);
+                    break;
+                case 'Autokey':
+                    encryptedText = autokeyEncrypt(text, key);
+                    break;
+                case 'Porta':
+                    encryptedText = portaEncrypt(text, key);
+                    break;
+                case 'Beaufort':
+                    encryptedText = beaufortEncrypt(text, key);
+                    break;
+                case 'Vernam':
+                    encryptedText = vernamEncrypt(text, key);
+                    break;
+                default:
+                    encryptedText = text;
+                    break;
+            }
+
+            document.getElementById('output').innerText = encryptedText;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+  </html>
