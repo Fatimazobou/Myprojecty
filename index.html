@@ -172,6 +172,18 @@
         .close-modal:hover {
             color: white;
         }
+        #codeTitle {
+            color: #569cd6;
+            text-align: center;
+            margin-bottom: 20px;
+            direction: ltr;
+        }
+        #codeTitle small {
+            display: block;
+            font-size: 0.7em;
+            margin-top: 5px;
+            color: #888;
+        }
         @media (max-width: 600px) {
             .btn-group {
                 flex-direction: column;
@@ -242,7 +254,7 @@
     <div id="codeModal" class="code-modal">
         <div class="code-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h3 id="codeTitle" style="color: #569cd6; text-align: center; margin-bottom: 20px;"></h3>
+            <h3 id="codeTitle"></h3>
             <pre id="codeDisplay"></pre>
         </div>
     </div>
@@ -262,7 +274,7 @@
 
         // أكواد الخوارزميات
         const cipherCodes = {
-            caesar: `// Caesar Cipher Implementation
+            caesar: `// Caesar Cipher - caesar.cxx
 #include <iostream>
 #include <string>
 using namespace std;
@@ -272,7 +284,7 @@ string caesarCipher(string text, int shift, bool encrypt) {
     for (char c : text) {
         if (isalpha(c)) {
             char base = isupper(c) ? 'A' : 'a';
-            int offset = (encrypt) ? shift : -shift;
+            int offset = encrypt ? shift : -shift;
             char shifted = (c - base + offset + 26) % 26 + base;
             result += shifted;
         } else {
@@ -299,7 +311,7 @@ int main() {
     return 0;
 }`,
 
-            vigenere: `// Vigenère Cipher Implementation
+            vigenere: `// Vigenère Cipher - vigenere.cxx
 #include <iostream>
 #include <string>
 using namespace std;
@@ -312,7 +324,7 @@ string vigenereCipher(string text, string key, bool encrypt) {
         if (isalpha(c)) {
             char base = isupper(c) ? 'A' : 'a';
             char keyChar = toupper(key[j % keyLen]);
-            int offset = (encrypt) ? keyChar - 'A' : -(keyChar - 'A');
+            int offset = encrypt ? keyChar - 'A' : -(keyChar - 'A');
             char shifted = (c - base + offset + 26) % 26 + base;
             result += shifted;
             j++;
@@ -339,7 +351,7 @@ int main() {
     return 0;
 }`,
 
-            atbash: `// Atbash Cipher Implementation
+            atbash: `// Atbash Cipher - atbash.cxx
 #include <iostream>
 #include <string>
 using namespace std;
@@ -372,7 +384,7 @@ int main() {
     return 0;
 }`,
 
-            substitution: `// Substitution Cipher Implementation
+            substitution: `// Substitution Cipher - substitution.cxx
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -428,7 +440,7 @@ int main() {
     return 0;
 }`,
 
-            porta: `// Porta Cipher Implementation
+            porta: `// Porta Cipher - porta.cxx
 #include <iostream>
 #include <string>
 #include <vector>
@@ -475,7 +487,7 @@ string portaCipher(string text, string key, bool encrypt) {
             int tableRow = keyChar - 'A';
             
             if (encrypt) {
-                int pos = alphabet.find(upperC);
+                int pos = alphabet.indexOf(upperC);
                 if (pos != string::npos) {
                     char newChar = portaTable[tableRow][pos];
                     result += isupper(c) ? newChar : tolower(newChar);
@@ -507,6 +519,115 @@ int main() {
     cout << "Encrypted: " << encrypted << endl;
     
     string decrypted = portaCipher(encrypted, key, false);
+    cout << "Decrypted: " << decrypted << endl;
+    
+    return 0;
+}`,
+
+            albam: `// Albam Cipher - albam.cxx
+#include <iostream>
+#include <string>
+using namespace std;
+
+string albamCipher(string text, bool encrypt) {
+    string firstHalf = "ABCDEFGHIJKLM";
+    string secondHalf = "NOPQRSTUVWXYZ";
+    string result = "";
+    
+    for (char c : text) {
+        if (isalpha(c)) {
+            bool isLower = islower(c);
+            char upperC = toupper(c);
+            size_t pos;
+            
+            if (encrypt) {
+                pos = firstHalf.find(upperC);
+                if (pos != string::npos) {
+                    char newChar = secondHalf[pos];
+                    result += isLower ? tolower(newChar) : newChar;
+                    continue;
+                }
+                
+                pos = secondHalf.find(upperC);
+                if (pos != string::npos) {
+                    char newChar = firstHalf[pos];
+                    result += isLower ? tolower(newChar) : newChar;
+                    continue;
+                }
+            } else {
+                pos = secondHalf.find(upperC);
+                if (pos != string::npos) {
+                    char newChar = firstHalf[pos];
+                    result += isLower ? tolower(newChar) : newChar;
+                    continue;
+                }
+                
+                pos = firstHalf.find(upperC);
+                if (pos != string::npos) {
+                    char newChar = secondHalf[pos];
+                    result += isLower ? tolower(newChar) : newChar;
+                    continue;
+                }
+            }
+        }
+        result += c;
+    }
+    return result;
+}
+
+int main() {
+    string text;
+    cout << "Enter text: ";
+    getline(cin, text);
+    
+    string encrypted = albamCipher(text, true);
+    cout << "Encrypted: " << encrypted << endl;
+    
+    string decrypted = albamCipher(encrypted, false);
+    cout << "Decrypted: " << decrypted << endl;
+    
+    return 0;
+}`,
+
+            atbah: `// Atbah Cipher - atbah.cxx
+#include <iostream>
+#include <string>
+#include <map>
+using namespace std;
+
+string atbahCipher(string text) {
+    map<char, char> mapping = {
+        {'A', 'I'}, {'B', 'H'}, {'C', 'G'}, {'D', 'F'}, {'E', 'E'},
+        {'F', 'D'}, {'G', 'C'}, {'H', 'B'}, {'I', 'A'},
+        {'J', 'R'}, {'K', 'Q'}, {'L', 'P'}, {'M', 'O'}, {'N', 'N'},
+        {'O', 'M'}, {'P', 'L'}, {'Q', 'K'}, {'R', 'J'},
+        {'S', 'Z'}, {'T', 'Y'}, {'U', 'X'}, {'V', 'W'}, {'W', 'V'},
+        {'X', 'U'}, {'Y', 'T'}, {'Z', 'S'}
+    };
+    
+    string result = "";
+    for (char c : text) {
+        if (isalpha(c)) {
+            bool isLower = islower(c);
+            char upperC = toupper(c);
+            char mapped = mapping[upperC];
+            result += isLower ? tolower(mapped) : mapped;
+        } else {
+            result += c;
+        }
+    }
+    return result;
+}
+
+int main() {
+    string text;
+    cout << "Enter text: ";
+    getline(cin, text);
+    
+    string encrypted = atbahCipher(text);
+    cout << "Encrypted: " << encrypted << endl;
+    
+    string decrypted = atbahCipher(encrypted);
     cout << "Decrypted: " << decrypted << endl;
     
     return 0;
@@ -602,7 +723,17 @@ int main() {
             const title = document.getElementById('codeTitle');
             const codeDisplay = document.getElementById('codeDisplay');
             
-            title.textContent = `كود خوارزمية ${document.getElementById('cipherSelect').options[document.getElementById('cipherSelect').selectedIndex].text}`;
+            const cipherName = document.getElementById('cipherSelect')
+                .options[document.getElementById('cipherSelect').selectedIndex].text;
+            
+            // استخراج اسم الملف من التعليق الأول في الكود
+            let fileName = "algorithm.cxx";
+            const firstLine = cipherCodes[cipher].split('\n')[0];
+            if (firstLine.includes('-')) {
+                fileName = firstLine.split('-')[1].trim();
+            }
+            
+            title.innerHTML = `${cipherName} Cipher<br><small>${fileName}</small>`;
             codeDisplay.textContent = cipherCodes[cipher];
             modal.style.display = 'block';
         }
@@ -624,7 +755,7 @@ int main() {
         function process(mode) {
             const cipher = document.getElementById('cipherSelect').value;
             const key = document.getElementById('keyInput').value;
-            const text = document.getElementById('textInput').value;
+            const text = document.getElementById('textInput').value.trim();
             
             // مسح النتائج السابقة
             clearResults();
@@ -666,42 +797,8 @@ int main() {
                 document.getElementById('resultOutput').value = result;
                 showStatus(`تم ${mode === 'encrypt' ? 'تشفير' : 'فك تشفير'} النص بنجاح`, "success");
                 
-                // التحقق التلقائي من صحة النتيجة
-                if (mode === 'encrypt') {
-                    verifyDecryption(cipher, key, result, text);
-                }
-                
             } catch (e) {
                 showStatus(`خطأ: ${e.message}`, "error");
-            }
-        }
-
-        // التحقق من صحة فك التشفير
-        function verifyDecryption(cipher, key, encryptedText, originalText) {
-            let decrypted;
-            try {
-                switch (cipher) {
-                    case 'caesar': decrypted = caesarCipher(encryptedText, key, 'decrypt'); break;
-                    case 'alberti': decrypted = albertiCipher(encryptedText, key, 'decrypt'); break;
-                    case 'trithemius': decrypted = trithemiusCipher(encryptedText, 'decrypt'); break;
-                    case 'substitution': decrypted = substitutionCipher(encryptedText, key, 'decrypt'); break;
-                    case 'albam': decrypted = albamCipher(encryptedText, 'decrypt'); break;
-                    case 'atbash': decrypted = atbashCipher(encryptedText); break;
-                    case 'atbah': decrypted = atbahCipher(encryptedText); break;
-                    case 'polybius': decrypted = polybiusCipher(encryptedText, 'decrypt'); break;
-                    case 'vigenere': decrypted = vigenereCipher(encryptedText, key, 'decrypt'); break;
-                    case 'autokey': decrypted = autokeyCipher(encryptedText, key, 'decrypt'); break;
-                    case 'porta': decrypted = portaCipher(encryptedText, key, 'decrypt'); break;
-                    case 'beaufort': decrypted = beaufortCipher(encryptedText, key, 'decrypt'); break;
-                    case 'vernam': decrypted = vernamCipher(encryptedText, key); break;
-                    default: return;
-                }
-                
-                if (decrypted.toUpperCase() !== originalText.toUpperCase()) {
-                    showStatus("تحذير: فك التشفير لم يعد النص الأصلي تماماً", "error");
-                }
-            } catch (e) {
-                showStatus(`خطأ في التحقق: ${e.message}`, "error");
             }
         }
 
@@ -714,16 +811,8 @@ int main() {
             return text.replace(/[a-z]/gi, c => {
                 const base = c <= 'Z' ? 65 : 97;
                 const code = c.charCodeAt(0) - base;
-                let newCode;
-                
-                if (mode === 'encrypt') {
-                    newCode = (code + shift) % 26;
-                    if (newCode < 0) newCode += 26;
-                } else {
-                    newCode = (code - shift) % 26;
-                    if (newCode < 0) newCode += 26;
-                }
-                
+                let newCode = mode === 'encrypt' ? (code + shift) % 26 : (code - shift) % 26;
+                if (newCode < 0) newCode += 26;
                 return String.fromCharCode(newCode + base);
             });
         }
@@ -821,28 +910,23 @@ int main() {
                     const keyChar = key[keyIndex % key.length].toUpperCase();
                     const tableRow = portaTable[keyChar];
                     
-                    if (!tableRow) {
-                        result += c;
-                        continue;
-                    }
-                    
                     if (mode === 'encrypt') {
                         const textPos = alphabet.indexOf(upperC);
-                        if (textPos === -1) {
-                            result += c;
-                        } else {
+                        if (textPos !== -1) {
                             const encryptedChar = tableRow[textPos];
                             result += isLower ? encryptedChar.toLowerCase() : encryptedChar;
                             keyIndex++;
+                        } else {
+                            result += c;
                         }
                     } else {
                         const encryptedPos = tableRow.indexOf(upperC);
-                        if (encryptedPos === -1) {
-                            result += c;
-                        } else {
+                        if (encryptedPos !== -1) {
                             const decryptedChar = alphabet[encryptedPos];
                             result += isLower ? decryptedChar.toLowerCase() : decryptedChar;
                             keyIndex++;
+                        } else {
+                            result += c;
                         }
                     }
                 } else {
@@ -870,12 +954,9 @@ int main() {
                     const textCode = upperC.charCodeAt(0) - base;
                     const keyCode = keyChar.charCodeAt(0) - base;
                     
-                    let newCode;
-                    if (mode === 'encrypt') {
-                        newCode = (textCode + keyCode) % 26;
-                    } else {
-                        newCode = (textCode - keyCode + 26) % 26;
-                    }
+                    let newCode = mode === 'encrypt' 
+                        ? (textCode + keyCode) % 26 
+                        : (textCode - keyCode + 26) % 26;
                     
                     const newChar = String.fromCharCode(newCode + base);
                     result += isLower ? newChar.toLowerCase() : newChar;
@@ -941,13 +1022,7 @@ int main() {
                     const textCode = upperC.charCodeAt(0) - base;
                     const keyCode = keyChar.charCodeAt(0) - base;
                     
-                    let newCode;
-                    if (mode === 'encrypt') {
-                        newCode = (keyCode - textCode + 26) % 26;
-                    } else {
-                        newCode = (keyCode - textCode + 26) % 26;
-                    }
-                    
+                    let newCode = (keyCode - textCode + 26) % 26;
                     const newChar = String.fromCharCode(newCode + base);
                     result += isLower ? newChar.toLowerCase() : newChar;
                     keyIndex++;
@@ -1058,13 +1133,15 @@ int main() {
             return text.replace(/[a-z]/gi, c => {
                 const isLower = c === c.toLowerCase();
                 const upperC = c.toUpperCase();
-                const index = alphabet.indexOf(upperC);
-                if (index === -1) return c;
                 
-                const newChar = mode === 'encrypt' 
-                    ? shiftedAlphabet[index] 
-                    : alphabet[shiftedAlphabet.indexOf(upperC)];
-                return isLower ? newChar.toLowerCase() : newChar;
+                if (mode === 'encrypt') {
+                    const index = alphabet.indexOf(upperC);
+                    if (index !== -1) return isLower ? shiftedAlphabet[index].toLowerCase() : shiftedAlphabet[index];
+                } else {
+                    const index = shiftedAlphabet.indexOf(upperC);
+                    if (index !== -1) return isLower ? alphabet[index].toLowerCase() : alphabet[index];
+                }
+                return c;
             });
         }
 
@@ -1080,12 +1157,9 @@ int main() {
                     const base = 'A'.charCodeAt(0);
                     const code = upperC.charCodeAt(0) - base;
                     
-                    let newCode;
-                    if (mode === 'encrypt') {
-                        newCode = (code + shift) % 26;
-                    } else {
-                        newCode = (code - shift + 26) % 26;
-                    }
+                    let newCode = mode === 'encrypt' 
+                        ? (code + shift) % 26 
+                        : (code - shift + 26) % 26;
                     
                     const newChar = String.fromCharCode(newCode + base);
                     result += isLower ? newChar.toLowerCase() : newChar;
